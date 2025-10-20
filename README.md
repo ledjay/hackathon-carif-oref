@@ -70,6 +70,11 @@ pnpm dev
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
 
+### Staging Environment
+
+The application is deployed on Vercel:
+- **Staging URL**: [https://hackathon-carif-oref-rnmm6kcwh-ledjays-projects.vercel.app/](https://hackathon-carif-oref-rnmm6kcwh-ledjays-projects.vercel.app/)
+
 ### Building for Production
 
 ```bash
