@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 export default function Chat() {
   const sessionIdRef = useRef<string | undefined>(undefined);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Initialize sessionId once on mount
   useEffect(() => {
@@ -21,6 +22,31 @@ export default function Chat() {
       },
     });
 
+  // Scroll to bottom - more reliable with scrollTop
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  // Auto-scroll when messages change or loading state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  // Additional effect to handle streaming updates
+  useEffect(() => {
+    if (
+      isLoading ||
+      (messages.length > 0 &&
+        messages[messages.length - 1]?.role === "assistant")
+    ) {
+      const interval = setInterval(scrollToBottom, 100);
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, messages]);
+
   return (
     <main className="max-w-4xl mx-auto  flex flex-col h-screen">
       <div className="flex items-center justify-between mb-4 p-6">
@@ -32,7 +58,10 @@ export default function Chat() {
         </span>
       </div>
 
-      <div className="space-y-3 p-6 border border-gray-200  flex-1 overflow-y-auto">
+      <div
+        ref={messagesContainerRef}
+        className="space-y-3 p-6 border border-gray-200  flex-1 overflow-y-auto"
+      >
         {messages.length === 0 && (
           <p className="text-gray-400 text-center py-8">
             Commencez une conversation...
