@@ -14,7 +14,20 @@ export async function POST(req: NextRequest) {
   const sessionId =
     req.headers.get("x-session-id") || crypto.randomUUID().replace(/-/g, "");
 
-  const n8nResponse = await fetch(process.env.N8N_CHAT_STREAM_URL!, {
+  // Validate environment variable
+  if (!process.env.N8N_CHAT_STREAM_URL) {
+    return new Response(
+      JSON.stringify({ error: "N8N_CHAT_STREAM_URL is not configured" }),
+      { 
+        status: 500, 
+        headers: { 
+          "Content-Type": "application/json" 
+        } 
+      }
+    );
+  }
+
+  const n8nResponse = await fetch(process.env.N8N_CHAT_STREAM_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
